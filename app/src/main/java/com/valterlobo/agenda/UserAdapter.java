@@ -1,19 +1,17 @@
 package com.valterlobo.agenda;
 
-import android.arch.persistence.room.Room;
+
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
@@ -22,10 +20,14 @@ class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
     private UserDao userDao;
 
+    private Context context;
 
-    public UserAdapter(List<User> users , UserDao userDao) {
+
+    public UserAdapter(List<User> users, UserDao userDao, Context context) {
         this.users = users;
         this.userDao = userDao;
+        this.context = context;
+
     }
 
     @Override
@@ -50,7 +52,7 @@ class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     public void removeItemAtPosition(int position) {
         userDao.removeAll(users.get(position));
         users.remove(position);
-       notifyDataSetChanged();
+        notifyDataSetChanged();
         //DataBase Remover
 
 
@@ -62,6 +64,7 @@ class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         public TextView lastName;
         public TextView email;
         public ImageButton btDelete;
+        public ImageButton btView;
 
         public ViewHolder(final View itemView) {
             super(itemView);
@@ -70,14 +73,30 @@ class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             lastName = itemView.findViewById(R.id.last_name);
             email = itemView.findViewById(R.id.email);
             btDelete = itemView.findViewById(R.id.bt_delete);
+            btView = itemView.findViewById(R.id.bt_view);
 
-            btDelete.setOnClickListener( new View.OnClickListener(){
+            btDelete.setOnClickListener(new View.OnClickListener() {
 
                 @Override
                 public void onClick(View view) {
 
-                    Log.i("USER-REOMVE"," REMOVE ON CLICK: " + getAdapterPosition());
-                    removeItemAtPosition( getAdapterPosition() ) ;
+                    Log.i("USER-REOMVE", " REMOVE ON CLICK: " + getAdapterPosition());
+                    removeItemAtPosition(getAdapterPosition());
+
+                }
+            });
+
+
+            btView.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View view) {
+
+                    Intent intent = new Intent(context, ViewUser.class);
+                    intent.putExtra("user_id", users.get(getAdapterPosition()).getId()) ;
+
+                    Log.i("USER-GET", "  ID USER : " +  users.get(getAdapterPosition()).getId() );
+                    context.startActivity(intent);
 
                 }
             });

@@ -18,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
     AppDatabase db;
 
     FloatingActionButton fab;
+    FloatingActionButton fabQrCode;
     RecyclerView recyclerView;
 
     RecyclerView.Adapter adapter;
@@ -31,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         fab = findViewById(R.id.fab);
+        fabQrCode =findViewById(R.id.fabqrcode);
+
         recyclerView = findViewById(R.id.recycler_view);
 
         db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "agenda-room")
@@ -38,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
                 .allowMainThreadQueries()
                 .build();
 
-        adapter = new UserAdapter(db.userDao().getAll() , db.userDao());
+        adapter = new UserAdapter(db.userDao().getAll() , db.userDao(), this.getApplicationContext());
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
@@ -52,5 +55,13 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, CreateUser.class));
             }
         });
+
+        fabQrCode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, QRCodeUser.class));
+            }
+        });
+
     }
 }
